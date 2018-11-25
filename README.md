@@ -11,6 +11,8 @@ https://www.conventionalcommits.org/en/v1.0.0-beta.2/
 
 via git pre commit hooks.
 
+The most useful information for electron can be found [here](https://electronjs.org/docs)
+
 
 ```
 yarn install
