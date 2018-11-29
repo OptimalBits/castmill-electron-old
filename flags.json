@@ -1,0 +1,9 @@
+{
+  "disk-cache-size": 1073741824,
+  "enable-gpu-rasterization": true,
+  "enable-hardware-overlays": true,
+  "enable-accelerated-2d-canvas": true,
+  "enable-gpu-memory-buffer-video-frames": true,
+  "enable-webgl-image-chromium": true,
+  "force-gpu-rasterization": true
+}

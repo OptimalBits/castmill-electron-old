@@ -1,14 +1,35 @@
 <template>
-   <v-dialog v-model="dialog" scrollable max-width="400px">
-      <v-btn slot="activator" color="primary" dark>Open Dialog</v-btn>
+   <v-dialog v-model="dialog.open" scrollable max-width="500px">
+      <warning :frame="frame" :dialog="warning"></warning>
       <v-card>
-        <v-card-title>Player Info</v-card-title>
+        <v-toolbar color="teal" dark>
+          <v-toolbar-title>Settings</v-toolbar-title>
+        </v-toolbar>
 
-        <div>Online: YES</div>
+        <v-card-text style="height: 700px;">
+
+           <v-list subheader>
+          <v-subheader>Player Info</v-subheader>
+          <v-list-tile>
+            <v-list-tile-content>
+              <v-list-tile-title>Online: {{info.online ? 'Yes' : 'No'}}</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
+          <v-list-tile>
+            <v-list-tile-content>
+              <v-list-tile-title>Internet: {{info.internet ? 'Yes' : 'No'}}</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
+          <v-list-tile>
+            <v-list-tile-content>
+              <v-list-tile-title>Device ID: {{info.deviceId}}</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list>
 
         <v-divider></v-divider>
-
-        <v-card-text style="height: 500px;">
           <v-list subheader two-line>
             <v-subheader>Player Settings</v-subheader>
 
@@ -17,7 +38,7 @@
                 <v-checkbox v-model="autostart"></v-checkbox>
               </v-list-tile-action>
 
-              <v-list-tile-content @click="autostart = !autostart">
+              <v-list-tile-content @click="updateAutostart(!autostart)">
                 <v-list-tile-title>Autostart</v-list-tile-title>
                 <v-list-tile-sub-title>Player will autostart on next reboot</v-list-tile-sub-title>
               </v-list-tile-content>
@@ -25,11 +46,11 @@
 
             <v-list-tile @click="">
               <v-list-tile-action>
-                <v-checkbox v-model="debug"></v-checkbox>
+                <v-checkbox v-model="options.debug"></v-checkbox>
               </v-list-tile-action>
 
-              <v-list-tile-content @click="debug = !debug">
-                <v-list-tile-title>Togle debug window</v-list-tile-title>
+              <v-list-tile-content @click="options.debug = !options.debug">
+                <v-list-tile-title>Debug window</v-list-tile-title>
                 <v-list-tile-sub-title>Show the debug window with useful player information</v-list-tile-sub-title>
               </v-list-tile-content>
             </v-list-tile>
@@ -38,17 +59,24 @@
 
             <v-subheader>Actions</v-subheader>
 
-            <v-list-tile @click="">
-              <v-list-tile-content @click="">
+            <v-list-tile @click="restart()">
+              <v-list-tile-content>
                 <v-list-tile-title>Restart</v-list-tile-title>
                 <v-list-tile-sub-title>Restarts the player</v-list-tile-sub-title>
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile @click="">
-              <v-list-tile-content @click="">
+            <v-list-tile @click="quit()">
+              <v-list-tile-content>
                 <v-list-tile-title>Quit</v-list-tile-title>
                 <v-list-tile-sub-title>Exits the playern</v-list-tile-sub-title>
+              </v-list-tile-content>
+            </v-list-tile>
+
+             <v-list-tile @click="unregister()">
+              <v-list-tile-content @click="">
+                <v-list-tile-title>Unregister</v-list-tile-title>
+                <v-list-tile-sub-title>Unregisters the player</v-list-tile-sub-title>
               </v-list-tile-content>
             </v-list-tile>
           </v-list>
@@ -56,76 +84,133 @@
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
-          <v-btn color="blue darken-1" flat @click="dialog = false">Close</v-btn>
+          <v-btn color="blue darken-1" flat @click="dialog.open = false">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <!--  <div class="menu">
-    <div class="info">
-      <h3>Info</h3>
-     <div>Version: {{version}}</div>
-     <div>Name: {{playerName}}</div>
-     <div>Connection: </div>
-     <div>Network: {{navigator.onLine}}</div>
-    </div>
-
-    <div class="actions">
-
-  alacarte.setHeader(service)
-    .addCheckbox('Autostart', autostart, function(state){
-      if(state){
-        return nssm.set(service, 'Start', 'SERVICE_AUTO_START').then(function(){
-          console.log("Autostart enabled")
-        });
-      }else{
-        return nssm.set(service, 'Start', 'SERVICE_DEMAND_START').then(function(){
-          console.log("Autostart disabled")
-        });
-      }
-    }).addItem('Resume', function(){
-      alacarte.hide();
-    }).addItem('Restart', function(){
-      window && window.location.reload();
-    }).addItem('Toggle Debug', function(){
-      iframe && iframe.contentWindow.postMessage('console', '*');
-    }).addItem('Quit', function(){
-      nssm.stop(service).finally(function(){
-        gui.App.quit();
-      })
-    }).addItem('Un-register (Caution!)', function(){
-      iframe && iframe.contentWindow.postMessage('delete', '*');
-      // Send a postmessage to the player iframe telling him to unregister this player.
-    });
-
-    -->
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 
-@Component
-export default class Menu extends Vue {
+import Store from "electron-store";
+const _Store = require("electron").remote.require("electron-store");
+
+import { getDeviceId } from "@/services/device";
+import { Frame } from "@/services/frame";
+
+const app = require("electron").remote.app;
+const exeFilePath = app.getPath("exe");
+
+import AutoLaunch from "auto-launch";
+import Warning from "@/components/warning.vue";
+
+const castmillPlayerAutoLauncher = new AutoLaunch({
+  name: "Castmill",
+  path: exeFilePath
+});
+
+interface Options {
+  debug: boolean;
+  server: string;
+}
+
+interface Info {
+  online: boolean;
+  internet: boolean;
+  deviceId: string;
+}
+
+Vue.component('warning', Warning);
+
+@Component({ name: "settings" })
+export default class Settings extends Vue {
   @Prop()
-  private msg!: string;
+  private dialog!: {
+    open: boolean;
+  };
+
+  @Prop()
+  private frame!: Frame;
+
+  warning = { open: false };
+
+  store: Store;
 
   version = "1.0.0";
   playerName = "Castmill";
   navigator = window.navigator;
 
   autostart = false;
-  debug = false;
-  dialogm1 = "";
-  dialog = false;
+
+  options: Options = <Options>{};
+
+  info: Info = {
+    online: false,
+    internet: false,
+    deviceId: ""
+  };
+
+  constructor() {
+    super();
+
+    this.store = <Store>new _Store({ name: "castmill-config" });
+
+    Object.assign(
+      this.options,
+      this.store.get("options", {
+        debug: false,
+        server: "player.castmill.io"
+      })
+    );
+
+    this.info.internet = navigator.onLine;
+
+    getDeviceId().then(deviceId => (this.info.deviceId = deviceId));
+
+    window.addEventListener("online", () => (this.info.internet = true));
+    window.addEventListener("offline", () => (this.info.internet = false));
+
+    castmillPlayerAutoLauncher
+      .isEnabled()
+      .then(autostart => (this.autostart = autostart));
+  }
+
+  @Watch("options", { deep: true })
+  updateOptions(val: string, oldVal: string) {
+    if (this.options.debug) {
+      // toggle is not appropiate, but require changes in the player
+      this.frame.toggleDebug();
+    }
+    this.store.set("options", this.options);
+  }
+
+  @Watch("autostart")
+  updateAutostart(autostart: boolean) {
+    this.autostart = autostart;
+    if (autostart) {
+      return castmillPlayerAutoLauncher.enable();
+    } else {
+      return castmillPlayerAutoLauncher.disable();
+    }
+  }
+
+  restart() {
+    window && window.location.reload();
+  }
+
+  quit() {
+    const remote = require("electron").remote;
+    const win = remote.getCurrentWindow();
+    win.close();
+  }
+
+  unregister() {
+    this.warning.open = true;
+  }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.menu {
-  display: block;
-  position: absolute;
-  z-index: 999;
-  background: #333;
-  color: #ccc;
-}
 </style>

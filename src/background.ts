@@ -3,6 +3,12 @@ import {
   createProtocol,
   installVueDevtools
 } from "vue-cli-plugin-electron-builder/lib";
+
+import { ChromeFlags } from "./services/chrome-flags";
+
+const chromeFlags = new ChromeFlags();
+chromeFlags.setup();
+
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -48,11 +54,7 @@ function createWindow() {
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
+  app.quit();
 });
 
 app.on("activate", () => {
