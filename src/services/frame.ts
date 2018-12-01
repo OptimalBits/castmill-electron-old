@@ -6,7 +6,7 @@ const MAX_IFRAME_TIMEOUT = 30000; // If no ping during 30 seconds, the iframe ma
 const MAX_MEMORY_USAGE = 384 * 1024 * 1024; // No more than 512Mb allowed for the player
 
 export class Frame {
-  iframe: HTMLIFrameElement;
+  iframe?: HTMLIFrameElement;
 
   lastPing = Date.now();
   playerReady = false;
@@ -48,7 +48,9 @@ export class Frame {
               versionStr: `Castmill-Player-Electron-${VERSION}`,
               model: "Windows"
             };
-            this.iframe.contentWindow.postMessage(JSON.stringify(env), "*");
+            if(this.iframe){
+                this.iframe.contentWindow.postMessage(JSON.stringify(env), "*");
+            }
             break;
           case "alive":
             this.lastPing = Date.now();
