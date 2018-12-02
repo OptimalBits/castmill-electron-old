@@ -1,15 +1,16 @@
+"use strict";
+
 import { app, protocol, BrowserWindow } from "electron";
 import {
   createProtocol,
   installVueDevtools
 } from "vue-cli-plugin-electron-builder/lib";
+const isDevelopment = process.env.NODE_ENV !== "production";
 
 import { ChromeFlags } from "./services/chrome-flags";
 
 const chromeFlags = new ChromeFlags();
 chromeFlags.setup();
-
-const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -33,28 +34,32 @@ function createWindow() {
   }
 
   win = new BrowserWindow(opts);
+  win.webContents.openDevTools();
 
   if (isDevelopment || process.env.IS_TEST) {
     // Load the url of the dev server if in development mode
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string);
     if (!process.env.IS_TEST) {
       win.webContents.openDevTools();
-    } else {
-      createProtocol("app");
-      // Load the index.html when not in development
-      win.loadURL("app://./index.html");
     }
-
-    win.on("closed", () => {
-      // outcommented until a ts compatible way is found
-      // win = <any>undefined;
-    });
+  } else {
+    createProtocol("app");
+    // Load the index.html when not in development
+    win.loadURL("app://./index.html");
   }
+
+  win.on("closed", () => {
+    win = void 0;
+  });
 }
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {
+  // On macOS it is common for applications and their menu bar
+  // to stay active until the user quits explicitly with Cmd + Q
+  // if (process.platform !== "darwin") {
   app.quit();
+  // }
 });
 
 app.on("activate", () => {
