@@ -9,7 +9,7 @@
 
 <script>
 import Settings from "@/components/settings";
-import { Frame } from "@/services/frame";
+import { Frame } from "@/render-services/frame";
 
 export default {
   name: "App",
