@@ -2,9 +2,11 @@
   "name": "castmill-player",
   "version": "0.1.0",
   "private": true,
-  "author": "",
+  "author": "OptimalBits <info@optimalbits.com>",
   "scripts": {
     "build": "yarn lint && vue-cli-service electron:build",
+    "build:linux": "vue-cli-service electron:build dist --linux",
+    "build:win": "vue-cli-service electron:build dist --win",
     "lint": "tslint --project tsconfig.json",
     "dev": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps"
@@ -28,6 +30,7 @@
     "@vue/cli-plugin-typescript": "^3.1.1",
     "@vue/cli-service": "^3.1.4",
     "electron": "^3.0.0",
+    "electron-builder": "^20.38.2",
     "husky": "^1.1.4",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
