@@ -14,6 +14,9 @@ via git pre commit hooks.
 The most useful information for electron can be found [here](https://electronjs.org/docs)
 
 
+Support for autolaunch is provided by this [package](https://www.npmjs.com/package/auto-launch)
+
+
 ```
 yarn install
 ```
@@ -45,3 +48,23 @@ yarn run lint
 ### Customize configuration
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+# Installing on DietPI
+
+If you build the player for linux arm architecture, you can install it as a debian package.
+However, you need to do a few things:
+```bash
+$ sudo dpkg --add-architecture armv7l
+
+$ sudo apt-get install gconf2 gconf-service libnotify4 libappindicator1 libxtst6 libnss3 libxss1
+
+$ sudo dpkg -i castmill-player-0.1.0-armv7l.deb
+```
+
+# Installing on Ubuntu
+
+It can be installed easily with ubuntus package manager, however following dependencies are needed, at least in Ubuntu 14:
+```
+$ sudo apt-get install libnss3 libdbus-1-3
+```
