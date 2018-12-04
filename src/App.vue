@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <div id="eventsurface" @click="settings.open = true"></div>
+    <div id="eventsurface" :style="style" @mousemove="showCursor" @click="openSettings"></div>
     <div id="player" ref="player"></div>
     <settings :frame="frame" :dialog="settings"></settings>
   </v-app>
@@ -10,6 +10,8 @@
 <script>
 import Settings from "@/components/settings";
 import { Frame } from "@/render-services/frame";
+
+const HIDE_CURSOR_TIMEOUT = 5 * 1000;
 
 export default {
   name: "App",
@@ -21,12 +23,30 @@ export default {
       settings: {
         open: false
       },
-      frame: {}
+      frame: {},
+      style: {
+        cursor: 'inherit'
+      }
     };
+  },
+  methods: {
+    openSettings: function() {
+      this.settings.open = true;
+      this.showCursor();
+    },
+    showCursor: function() {
+      this.style.cursor = 'inherit';
+
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
+        this.style.cursor = 'none';
+      }, HIDE_CURSOR_TIMEOUT);
+    }
   },
 
   mounted() {
     this.frame = new Frame(this.$refs.player);
+    this.showCursor();
   }
 };
 </script>
