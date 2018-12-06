@@ -11,13 +11,13 @@
           <v-subheader>Player Info</v-subheader>
           <v-list-tile>
             <v-list-tile-content>
-              <v-list-tile-title>Online: {{info.online ? 'Yes' : 'No'}}</v-list-tile-title>
+              <v-list-tile-title>Has internet: {{info.internet ? 'Yes' : 'No'}}</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
 
           <v-list-tile>
             <v-list-tile-content>
-              <v-list-tile-title>Internet: {{info.internet ? 'Yes' : 'No'}}</v-list-tile-title>
+              <v-list-tile-title>Connected to server: {{info.connected ? 'Yes' : 'No'}}</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
 
@@ -94,7 +94,7 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import Store from 'electron-store';
 const _Store = require('electron').remote.require('electron-store');
 
-import { getDeviceId } from '@/render-services/device';
+import { getDeviceId, getConnectionStatus } from '@/render-services/device';
 import { Frame } from '@/render-services/frame';
 
 const app = require('electron').remote.app;
@@ -114,8 +114,8 @@ interface Options {
 }
 
 interface Info {
-  online: boolean;
   internet: boolean;
+  connected: boolean;
   deviceId: string;
 }
 
@@ -144,8 +144,8 @@ export default class Settings extends Vue {
   options: Options = <Options>{};
 
   info: Info = {
-    online: false,
     internet: false,
+    connected: false,
     deviceId: '',
   };
 
@@ -164,6 +164,7 @@ export default class Settings extends Vue {
 
     this.info.internet = navigator.onLine;
 
+    getConnectionStatus().then(connected => (this.info.connected = connected));
     getDeviceId().then(deviceId => (this.info.deviceId = deviceId));
 
     window.addEventListener('online', () => (this.info.internet = true));
