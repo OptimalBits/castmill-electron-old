@@ -164,7 +164,6 @@ export default class Settings extends Vue {
 
     this.info.internet = navigator.onLine;
 
-    getConnectionStatus().then(connected => (this.info.connected = connected));
     getDeviceId().then(deviceId => (this.info.deviceId = deviceId));
 
     window.addEventListener('online', () => (this.info.internet = true));
@@ -191,6 +190,13 @@ export default class Settings extends Vue {
       return castmillPlayerAutoLauncher.enable();
     } else {
       return castmillPlayerAutoLauncher.disable();
+    }
+  }
+
+  @Watch('dialog.open')
+  handleDialogStateChange(open: boolean) {
+    if (open) {
+      getConnectionStatus().then(connected => (this.info.connected = connected));
     }
   }
 
