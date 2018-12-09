@@ -1,7 +1,7 @@
 'use strict';
 
 import * as logger from 'electron-log';
-import { app, protocol, BrowserWindow } from 'electron';
+import { app, powerSaveBlocker, protocol, BrowserWindow } from 'electron';
 import {
   createProtocol,
   installVueDevtools,
@@ -18,6 +18,9 @@ import { ChromeFlags } from './services/chrome-flags';
 
 const chromeFlags = new ChromeFlags();
 chromeFlags.setup();
+
+const blockerId = powerSaveBlocker.start('prevent-display-sleep');
+logger.debug(`Blocking screensaver: ${powerSaveBlocker.isStarted(blockerId)}`);
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
