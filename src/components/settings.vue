@@ -78,7 +78,7 @@
           <v-list-tile @click="quit()">
             <v-list-tile-content>
               <v-list-tile-title>Quit</v-list-tile-title>
-              <v-list-tile-sub-title>Exits the playern</v-list-tile-sub-title>
+              <v-list-tile-sub-title>Exits the player</v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
 
