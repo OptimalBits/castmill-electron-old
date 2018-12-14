@@ -1,6 +1,7 @@
 <template>
   <v-dialog v-model="dialog.open" scrollable max-width="500px">
     <warning :frame="frame" :dialog="warning"></warning>
+
     <v-card>
       <v-toolbar color="teal" dark>
         <v-toolbar-title>Settings</v-toolbar-title>
@@ -32,27 +33,36 @@
         <v-list subheader two-line>
           <v-subheader>Player Settings</v-subheader>
 
-          <v-list-tile @click>
-            <v-list-tile-action>
-              <v-checkbox v-model="autostart"></v-checkbox>
-            </v-list-tile-action>
+          <v-tabs>
+            <v-tab :key="1">Basic</v-tab>
+            <v-tab :key="2">Wifi</v-tab>
+            <v-tab-item :key="1">
+              <v-list-tile @click>
+                <v-list-tile-action>
+                  <v-checkbox v-model="autostart"></v-checkbox>
+                </v-list-tile-action>
 
-            <v-list-tile-content @click="updateAutostart(!autostart)">
-              <v-list-tile-title>Autostart</v-list-tile-title>
-              <v-list-tile-sub-title>Player will autostart on next reboot</v-list-tile-sub-title>
-            </v-list-tile-content>
-          </v-list-tile>
+                <v-list-tile-content @click="updateAutostart(!autostart)">
+                  <v-list-tile-title>Autostart</v-list-tile-title>
+                  <v-list-tile-sub-title>Player will autostart on next reboot</v-list-tile-sub-title>
+                </v-list-tile-content>
+              </v-list-tile>
 
-          <v-list-tile @click>
-            <v-list-tile-action>
-              <v-checkbox v-model="options.debug"></v-checkbox>
-            </v-list-tile-action>
+              <v-list-tile @click>
+                <v-list-tile-action>
+                  <v-checkbox v-model="options.debug"></v-checkbox>
+                </v-list-tile-action>
 
-            <v-list-tile-content @click="options.debug = !options.debug">
-              <v-list-tile-title>Debug window</v-list-tile-title>
-              <v-list-tile-sub-title>Show the debug window with useful player information</v-list-tile-sub-title>
-            </v-list-tile-content>
-          </v-list-tile>
+                <v-list-tile-content @click="options.debug = !options.debug">
+                  <v-list-tile-title>Debug window</v-list-tile-title>
+                  <v-list-tile-sub-title>Show the debug window with useful player information</v-list-tile-sub-title>
+                </v-list-tile-content>
+              </v-list-tile>
+            </v-tab-item>
+            <v-tab-item :key="2">
+              <select-wifi></select-wifi>
+            </v-tab-item>
+          </v-tabs>
 
           <v-divider></v-divider>
 
@@ -95,6 +105,9 @@ import Store from 'electron-store';
 const _Store = require('electron').remote.require('electron-store');
 
 import { getDeviceId, getConnectionStatus } from '@/render-services/device';
+
+import { getWifiScan, getCurrentConnection } from '@/render-services/wifi';
+
 import { Frame } from '@/render-services/frame';
 
 const app = require('electron').remote.app;
@@ -102,6 +115,8 @@ const exeFilePath = app.getPath('exe');
 
 import AutoLaunch from 'auto-launch';
 import Warning from '@/components/warning.vue';
+import SelectWifi from '@/components/select-wifi.vue';
+import { Network } from '@/interfaces/network';
 
 const castmillPlayerAutoLauncher = new AutoLaunch({
   name: 'Castmill',
@@ -119,7 +134,13 @@ interface Info {
   deviceId: string;
 }
 
+interface Wifi {
+  scanning: boolean;
+  networks: Network[];
+}
+
 Vue.component('warning', Warning);
+Vue.component('select-wifi', SelectWifi);
 
 @Component({ name: 'settings' })
 export default class Settings extends Vue {
@@ -148,7 +169,6 @@ export default class Settings extends Vue {
     connected: false,
     deviceId: '',
   };
-
   constructor() {
     super();
 
@@ -161,18 +181,6 @@ export default class Settings extends Vue {
         server: 'player.castmill.io',
       }),
     );
-
-    this.info.internet = navigator.onLine;
-
-    getConnectionStatus().then(connected => (this.info.connected = connected));
-    getDeviceId().then(deviceId => (this.info.deviceId = deviceId));
-
-    window.addEventListener('online', () => (this.info.internet = true));
-    window.addEventListener('offline', () => (this.info.internet = false));
-
-    castmillPlayerAutoLauncher
-      .isEnabled()
-      .then(autostart => (this.autostart = autostart));
   }
 
   @Watch('options', { deep: true })
@@ -194,6 +202,22 @@ export default class Settings extends Vue {
     }
   }
 
+  mounted() {
+    this.info.internet = navigator.onLine;
+
+    getConnectionStatus().then(connected => (this.info.connected = connected));
+    getDeviceId().then(deviceId => (this.info.deviceId = deviceId));
+
+    window.addEventListener('online', () => (this.info.internet = true));
+    window.addEventListener('offline', () => (this.info.internet = false));
+
+    castmillPlayerAutoLauncher
+      .isEnabled()
+      .then(autostart => (this.autostart = autostart));
+  }
+
+  destroyed() {}
+
   restart() {
     window && window.location.reload();
   }
@@ -212,4 +236,5 @@ export default class Settings extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
 </style>
