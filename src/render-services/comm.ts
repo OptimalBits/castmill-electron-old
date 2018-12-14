@@ -10,12 +10,18 @@ export function createIpcFunction<T, R>(name: string) {
 }
 
 function createIpcResponseHandler<R>(name: string) {
-  return new Promise<R>((resolve, reject) => {
-    ipcRenderer.on(`${name}:reply`, (event: Electron.Event, data: R) =>
-      resolve(data),
-    );
+  const channel = `${name}:reply`;
 
-    delay(Timeout).then(() => reject(new Error('Timeout')));
+  return new Promise<R>((resolve, reject) => {
+    const handler = (event: Electron.Event, data: R) => resolve(data);
+
+    ipcRenderer.once(channel, handler);
+
+    delay(Timeout).then(() => {
+      // remove the listener. Any other listeners on the channel should be left untouched
+      ipcRenderer.removeListener(channel, handler);
+      reject(new Error('Timeout'));
+    });
   });
 }
 

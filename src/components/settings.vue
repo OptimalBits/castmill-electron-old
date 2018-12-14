@@ -218,6 +218,15 @@ export default class Settings extends Vue {
 
   destroyed() {}
 
+  @Watch('dialog.open')
+  handleDialogStateChange(open: boolean) {
+    if (open) {
+      getConnectionStatus().then(
+        connected => (this.info.connected = connected),
+      );
+    }
+  }
+
   restart() {
     window && window.location.reload();
   }
@@ -236,5 +245,4 @@ export default class Settings extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
 </style>
