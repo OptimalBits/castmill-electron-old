@@ -88,6 +88,13 @@
               <v-list-tile-sub-title>Unregisters the player</v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
+
+          <v-list-tile @click="openDevTools()">
+            <v-list-tile-content @click>
+              <v-list-tile-title>Dev Tools</v-list-tile-title>
+              <v-list-tile-sub-title>Debug renderer process</v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
         </v-list>
       </v-card-text>
       <v-divider></v-divider>
@@ -239,6 +246,10 @@ export default class Settings extends Vue {
 
   unregister() {
     this.warning.open = true;
+  }
+
+  openDevTools() {
+    remote.getCurrentWebContents().openDevTools();
   }
 }
 </script>
