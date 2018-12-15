@@ -117,8 +117,9 @@ import { getWifiScan, getCurrentConnection } from '@/render-services/wifi';
 
 import { Frame } from '@/render-services/frame';
 
-const app = require('electron').remote.app;
-const exeFilePath = app.getPath('exe');
+const { remote } = require('electron');
+
+const exeFilePath = remote.process.env.APPIMAGE || remote.app.getPath('exe');
 
 import AutoLaunch from 'auto-launch';
 import Warning from '@/components/warning.vue';
