@@ -19,6 +19,7 @@
     "electron-store": "^2.0.0",
     "mkdirp": "^0.5.1",
     "node-fetch": "^2.3.0",
+    "node-wifi": "^2.0.4",
     "request": "^2.88.0",
     "vue": "^2.5.17",
     "vue-class-component": "^6.0.0",

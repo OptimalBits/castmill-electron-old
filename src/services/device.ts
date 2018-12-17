@@ -22,7 +22,7 @@ export const getConnectionStatus = async function(): Promise<boolean> {
 
     logger.debug('connection status', response.ok);
     return response.ok;
-  } catch(e) {
+  } catch (e) {
     logger.error(e);
     return false;
   }
