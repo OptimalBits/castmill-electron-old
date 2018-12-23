@@ -18,7 +18,8 @@ function createIpcResponseHandler<R>(name: string) {
     ipcRenderer.once(channel, handler);
 
     delay(Timeout).then(() => {
-      // remove the listener. Any other listeners on the channel should be left untouched
+      // Remove the listener.
+      // Any other listeners on the channel should be left untouched
       ipcRenderer.removeListener(channel, handler);
       reject(new Error('Timeout'));
     });

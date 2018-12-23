@@ -91,7 +91,7 @@ export default class ConnectWifi extends Vue {
   resetPassword() {
     this.password = '';
 
-    const form: any = this.$refs.form;
+    const form = this.$refs.form as HTMLFormElement;
     form.reset();
   }
 }
