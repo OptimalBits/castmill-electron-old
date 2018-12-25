@@ -22,4 +22,9 @@ export const autoUpdateWhenAvailable = () => {
     logger.debug('checking for updates');
     updater.checkForUpdates();
   }, updatePollInterval);
+
+  updater.on('update-downloaded', () => {
+    logger.debug('update downloaded');
+    updater.quitAndInstall();
+  });
 };
