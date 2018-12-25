@@ -229,7 +229,8 @@ export default class Settings extends Vue {
   @Watch('dialog.open')
   handleDialogStateChange(open: boolean) {
     if (open) {
-      getConnectionStatus().then(connected => (this.info.connected = connected));
+      getConnectionStatus()
+        .then(connected => (this.info.connected = connected));
 
       castmillPlayerAutoLauncher
         .isEnabled()
