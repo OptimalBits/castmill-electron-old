@@ -1,10 +1,10 @@
 /**
 	File cache.
 */
-const request = require("request");
-const fs = require("fs");
-const path = require("path");
-const mkdirp = require("mkdirp");
+const request = require('request');
+const fs = require('fs');
+const path = require('path');
+const mkdirp = require('mkdirp');
 
 export class Cache {
   constructor(private dataPath: string) {
@@ -20,21 +20,21 @@ export class Cache {
         if (err) return reject(err);
 
         const dstStream = fs.createWriteStream(dstFile, {
-          flags: "w",
-          encoding: null
+          flags: 'w',
+          encoding: null,
         });
 
         srcStream.pipe(dstStream);
 
-        dstStream.on("finish", function() {
+        dstStream.on('finish', function() {
           resolve(localUrl);
         });
 
-        srcStream.on("error", function(err: Error) {
+        srcStream.on('error', function(err: Error) {
           reject(err);
         });
 
-        dstStream.on("error", function(err: Error) {
+        dstStream.on('error', function(err: Error) {
           reject(err);
         });
       });
@@ -45,9 +45,7 @@ export class Cache {
 /*
 var cache = new Cache('data');
 
-cache.downloadFile('http://clips.vorwaerts-gmbh.de/VfE_html5.mp4', 'blabla').then(function(){
-	console.log("Done!")
-}, function(err){
-	console.log(err);
-})
+await 
+cache.downloadFile('http://clips.vorwaerts-gmbh.de/VfE_html5.mp4', 'blabla');
+console.log("Done!")
 */

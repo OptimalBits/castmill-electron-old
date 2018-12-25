@@ -14,7 +14,8 @@ import { wifi } from './services/wifi';
 // Initialize wifi module
 // Absolutely necessary even to set interface to null
 wifi.init({
-  iface: null, // network interface, choose a random wifi interface if set to null
+  // network interface, choose a random wifi interface if set to null
+  iface: null,
 });
 
 getDeviceId().then(deviceId => logger.warn('Device Id:', deviceId));

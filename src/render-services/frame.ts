@@ -2,8 +2,12 @@ import { getDeviceId } from './device';
 
 const VERSION = '1.0.0';
 const PLAYER_URL = 'https://player.castmill.com';
-const MAX_IFRAME_TIMEOUT = 30000; // If no ping during 30 seconds, the iframe may have crashed.
-const MAX_MEMORY_USAGE = 384 * 1024 * 1024; // No more than 512Mb allowed for the player
+
+// If no ping during 30 seconds, the iframe may have crashed.
+const MAX_IFRAME_TIMEOUT = 30000;
+
+// No more than 512Mb allowed for the player
+const MAX_MEMORY_USAGE = 384 * 1024 * 1024;
 
 export class Frame {
   iframe: HTMLIFrameElement;
