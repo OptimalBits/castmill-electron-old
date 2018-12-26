@@ -78,7 +78,7 @@
           <v-list-tile @click="quit()">
             <v-list-tile-content>
               <v-list-tile-title>Quit</v-list-tile-title>
-              <v-list-tile-sub-title>Exits the playern</v-list-tile-sub-title>
+              <v-list-tile-sub-title>Exits the player</v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
 
@@ -86,6 +86,13 @@
             <v-list-tile-content @click>
               <v-list-tile-title>Unregister</v-list-tile-title>
               <v-list-tile-sub-title>Unregisters the player</v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
+          <v-list-tile @click="openDevTools()">
+            <v-list-tile-content @click>
+              <v-list-tile-title>Dev Tools</v-list-tile-title>
+              <v-list-tile-sub-title>Debug renderer process</v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
         </v-list>
@@ -110,8 +117,9 @@ import { getWifiScan, getCurrentConnection } from '@/render-services/wifi';
 
 import { Frame } from '@/render-services/frame';
 
-const app = require('electron').remote.app;
-const exeFilePath = app.getPath('exe');
+const { remote } = require('electron');
+
+const exeFilePath = remote.process.env.APPIMAGE || remote.app.getPath('exe');
 
 import AutoLaunch from 'auto-launch';
 import Warning from '@/components/warning.vue';
@@ -221,9 +229,12 @@ export default class Settings extends Vue {
   @Watch('dialog.open')
   handleDialogStateChange(open: boolean) {
     if (open) {
-      getConnectionStatus().then(
-        connected => (this.info.connected = connected),
-      );
+      getConnectionStatus()
+        .then(connected => (this.info.connected = connected));
+
+      castmillPlayerAutoLauncher
+        .isEnabled()
+        .then(autostart => (this.autostart = autostart));
     }
   }
 
@@ -239,6 +250,10 @@ export default class Settings extends Vue {
 
   unregister() {
     this.warning.open = true;
+  }
+
+  openDevTools() {
+    remote.getCurrentWebContents().openDevTools();
   }
 }
 </script>

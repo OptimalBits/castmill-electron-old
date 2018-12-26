@@ -6,6 +6,7 @@ import {
   createProtocol,
   installVueDevtools,
 } from 'vue-cli-plugin-electron-builder/lib';
+import { autoUpdateWhenAvailable }  from './services/updater';
 logger.warn('Starting background process');
 
 import { getDeviceId } from './services/device';
@@ -29,6 +30,8 @@ chromeFlags.setup();
 
 const blockerId = powerSaveBlocker.start('prevent-display-sleep');
 logger.debug(`Blocking screensaver: ${powerSaveBlocker.isStarted(blockerId)}`);
+
+autoUpdateWhenAvailable();
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
