@@ -45,7 +45,21 @@ yarn run test
 yarn run lint
 ```
 
-### Customize configuration
+### Player Configuration
+
+Select a specific environment by specifying `VUE_APP_PLAYER_CONFIG` Defaults to `tpd`
+
+Examples:
+
+```
+VUE_APP_PLAYER_CONFIG=whitelabel yarn dev
+```
+
+```
+VUE_APP_PLAYER_CONFIG=castmill yarn run build
+```
+
+### Build configuration
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
