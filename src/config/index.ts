@@ -19,7 +19,7 @@ export function getConfig(): Config {
   logger.debug('config:', configId, config);
 
   if(!config) {
-  logger.debug('defaulting to tpd config', tpdConfig);
+    logger.debug('defaulting to tpd config', tpdConfig);
     return tpdConfig;
   }
 
