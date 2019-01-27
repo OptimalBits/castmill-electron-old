@@ -13,6 +13,7 @@ module.exports = {
         linux: {
           category: "Video",
           target: [
+            /*
             {
               target: "AppImage",
               arch: ["armv7l", "ia32", "x64"]
@@ -24,10 +25,15 @@ module.exports = {
             {
               target: "apk",
               arch: ["armv7l"]
-            }
-          ]
-        }
-      }
-    }
-  }
+            },
+            */
+            {
+              target: 'apk',
+              arch: ['armv7l'],
+            },
+          ],
+        },
+      },
+    },
+  },
 };
