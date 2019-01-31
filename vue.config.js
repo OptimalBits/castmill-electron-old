@@ -5,7 +5,7 @@ module.exports = {
         appId: "com.castmill.player",
         productName: "Castmill Player",
         copyright: "(c) 2011-2018 Optimal Bits Sweden AB",
-        artifactName: "${name}_${version}_${arch}.${ext}",
+        artifactName: "${name}-${version}-${arch}.${ext}",
         appImage: {
           systemIntegration: "doNotAsk"
         },
@@ -16,14 +16,6 @@ module.exports = {
             {
               target: "AppImage",
               arch: ["armv7l", "ia32", "x64"]
-            },
-            {
-              target: "pacman",
-              arch: ["armv7l"]
-            },
-            {
-              target: "apk",
-              arch: ["armv7l"]
             }
           ]
         }

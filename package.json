@@ -9,13 +9,15 @@
     "build:win": "vue-cli-service electron:build dist --win",
     "lint": "tslint --project tsconfig.json",
     "dev": "vue-cli-service electron:serve",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "publish:linux": "publish linux-armv7l --path dist_electron"
   },
   "dependencies": {
     "@types/node-fetch": "^2.1.4",
     "address": "^1.0.3",
     "auto-launch": "^5.0.5",
     "electron-log": "^2.2.17",
+    "electron-simple-publisher": "^0.6.2",
     "electron-simple-updater": "^1.4.0",
     "electron-store": "^2.0.0",
     "mkdirp": "^0.5.1",
