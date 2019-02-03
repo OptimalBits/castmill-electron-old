@@ -5,7 +5,7 @@ module.exports = {
         appId: "com.castmill.player",
         productName: "Castmill Player",
         copyright: "(c) 2011-2018 Optimal Bits Sweden AB",
-        artifactName: "${name}-${version}-${arch}.${ext}",
+        artifactName: "${name}-${version}-${arch}.${ext}", // do not change. Required for autoupdate
         appImage: {
           systemIntegration: "doNotAsk"
         },
