@@ -3,4 +3,5 @@ export interface Config {
   logUrl: string;
   connectionCheckUrl: string;
   updateCheckUrl: string;
+  updateChannel: string;
 }
