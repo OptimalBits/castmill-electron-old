@@ -5,12 +5,15 @@
   "author": "OptimalBits <info@optimalbits.com>",
   "scripts": {
     "build": "yarn lint && vue-cli-service electron:build",
-    "build:linux": "vue-cli-service electron:build dist --linux",
+    "build:linux": "yarn run build:linux:test",
+    "build:linux:test": "vue-cli-service electron:build --linux",
+    "build:linux:prod": "VUA_APP_BUILD_MODE=prod yarn run build:linux",
     "build:win": "vue-cli-service electron:build dist --win",
     "lint": "tslint --project tsconfig.json",
     "dev": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
-    "publish:linux": "publish linux-armv7l --path dist_electron"
+    "publish:linux:test": "publish all --path dist_electron --channel tpd",
+    "publish:linux:prod": "publish all --path dist_electron --channel tpd-prod"
   },
   "dependencies": {
     "@types/node-fetch": "^2.1.4",
