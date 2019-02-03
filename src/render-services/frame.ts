@@ -1,7 +1,7 @@
 import { getDeviceId } from './device';
+import {getConfig} from '@/config';
 
 const VERSION = '1.0.0';
-const PLAYER_URL = 'https://player.castmill.com';
 
 // If no ping during 30 seconds, the iframe may have crashed.
 const MAX_IFRAME_TIMEOUT = 30000;
@@ -95,7 +95,7 @@ export class Frame {
     iframe.width = '100%';
     iframe.height = '100%';
     iframe.allow = 'geolocation';
-    iframe.src = PLAYER_URL;
+    iframe.src = getConfig().playerUrl;
     el.appendChild(iframe);
 
     return iframe;

@@ -2,8 +2,7 @@ import * as logger from 'electron-log';
 import * as crypto from 'crypto';
 import { ipcMain } from 'electron';
 import fetch from 'node-fetch';
-
-const CONNECTION_CHECK_URL = 'https://player.castmill.com/log';
+import {getConfig} from '../config';
 
 const address = require('address');
 
@@ -16,7 +15,7 @@ export const getDeviceId = async function() {
 
 export const getConnectionStatus = async function(): Promise<boolean> {
   try {
-    const response = await fetch(CONNECTION_CHECK_URL, {
+    const response = await fetch(getConfig().connectionCheckUrl, {
       method: 'POST',
     });
 
