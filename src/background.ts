@@ -1,16 +1,24 @@
 'use strict';
 
 import * as logger from 'electron-log';
-import { app, powerSaveBlocker, protocol, BrowserWindow } from 'electron';
+import {
+  app,
+  powerSaveBlocker,
+  protocol,
+  BrowserWindow,
+  screen,
+} from 'electron';
 import {
   createProtocol,
   installVueDevtools,
 } from 'vue-cli-plugin-electron-builder/lib';
-import { autoUpdateWhenAvailable }  from './services/updater';
+import { autoUpdateWhenAvailable } from './services/updater';
 logger.warn('Starting background process');
 
 import { getDeviceId } from './services/device';
 import { wifi } from './services/wifi';
+
+process.env.GOOGLE_API_KEY = 'AIzaSyCaED1Vyn4acfuf4oSmaVx1hVhpwUY5_Qg';
 
 // Initialize wifi module
 // Absolutely necessary even to set interface to null
@@ -21,7 +29,7 @@ wifi.init({
 
 getDeviceId().then(deviceId => logger.warn('Device Id:', deviceId));
 
-const isDevelopment = process.env.NODE_ENV !== 'production';
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 import { ChromeFlags } from './services/chrome-flags';
 
@@ -42,19 +50,26 @@ protocol.registerStandardSchemes(['app'], { secure: true });
 function createWindow() {
   // Create the browser window.
   let opts;
-
   if (isDevelopment) {
-    opts = { width: 800, height: 600 };
+    opts = { width: 1024, height: 768 };
   } else {
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+
     opts = {
       fullscreen: true,
       kiosk: true,
       frame: false,
       transparent: true,
+      width,
+      height,
     };
   }
 
   win = new BrowserWindow(opts);
+
+  if (!isDevelopment) {
+    win.maximize();
+  }
 
   if (isDevelopment || process.env.IS_TEST) {
     // Load the url of the dev server if in development mode
