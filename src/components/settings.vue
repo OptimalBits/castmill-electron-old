@@ -12,6 +12,12 @@
           <v-subheader>Player Info</v-subheader>
           <v-list-tile>
             <v-list-tile-content>
+              <v-list-tile-title>Version: {{info.versionStr}}</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
+          <v-list-tile>
+            <v-list-tile-content>
               <v-list-tile-title>Has internet: {{info.internet ? 'Yes' : 'No'}}</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -111,7 +117,7 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import Store from 'electron-store';
 const _Store = require('electron').remote.require('electron-store');
 
-import { getDeviceId, getConnectionStatus } from '@/render-services/device';
+import { getDeviceId, getConnectionStatus, getPlayerInfo } from '@/render-services/device';
 
 import { getWifiScan, getCurrentConnection } from '@/render-services/wifi';
 
@@ -140,6 +146,7 @@ interface Info {
   internet: boolean;
   connected: boolean;
   deviceId: string;
+  versionStr: string;
 }
 
 interface Wifi {
@@ -164,8 +171,6 @@ export default class Settings extends Vue {
 
   store: Store;
 
-  version = '1.0.0';
-  playerName = 'Castmill';
   navigator = window.navigator;
 
   autostart = false;
@@ -176,6 +181,7 @@ export default class Settings extends Vue {
     internet: false,
     connected: false,
     deviceId: '',
+    versionStr: '',
   };
   constructor() {
     super();
@@ -229,6 +235,10 @@ export default class Settings extends Vue {
   @Watch('dialog.open')
   handleDialogStateChange(open: boolean) {
     if (open) {
+      getPlayerInfo()
+        .then(({version, channel}) => 
+          this.info.versionStr = `${version}-${channel}`);
+
       getConnectionStatus()
         .then(connected => (this.info.connected = connected));
 

@@ -1,8 +1,13 @@
 import * as logger from 'electron-log';
 import * as crypto from 'crypto';
-import { ipcMain } from 'electron';
+import { app, ipcMain } from 'electron';
 import fetch from 'node-fetch';
-import {getConfig} from '../config';
+import { getConfig } from '../config';
+
+interface PlayerInfo {
+  version: string;
+  channel: string;
+}
 
 const address = require('address');
 
@@ -41,6 +46,17 @@ function getMacAsync(): Promise<string> {
   });
 }
 
+export const getPlayerInfo = async function(): Promise<PlayerInfo> {
+  const playerInfo = {
+    channel: getConfig().updateChannel,
+    version: app.getVersion(),
+  };
+
+  logger.debug('player info', playerInfo);
+
+  return Promise.resolve(playerInfo);
+};
+
 //
 // Listen to renderer
 //
@@ -52,4 +68,9 @@ ipcMain.on('getDeviceId', async (event: Electron.Event) => {
 ipcMain.on('getConnectionStatus', async (event: Electron.Event) => {
   const connected = await getConnectionStatus();
   event.sender.send('getConnectionStatus:reply', connected);
+});
+
+ipcMain.on('getPlayerInfo', async (event: Electron.Event) => {
+  const playerInfo = await getPlayerInfo();
+  event.sender.send('getPlayerInfo:reply', playerInfo);
 });
