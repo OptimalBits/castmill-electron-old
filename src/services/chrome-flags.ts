@@ -1,13 +1,18 @@
-import { app } from "electron";
+import { app } from 'electron';
 
 export class ChromeFlags {
   flags: {
-      [index: string]: string
+    [index: string]: string;
   };
 
   constructor() {
-    console.log("GPU Features", app.getGPUFeatureStatus());
-    this.flags = require("../../flags.json");
+    console.log('GPU Features', app.getGPUFeatureStatus());
+    /*
+    app.getGPUInfo('complete').then(function(info: object) {
+      console.log(info);
+    });
+    */
+    this.flags = require('../../flags.json');
   }
 
   setup() {

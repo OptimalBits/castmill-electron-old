@@ -9,15 +9,19 @@ const MAX_IFRAME_TIMEOUT = 30000;
 // No more than 512Mb allowed for the player
 const MAX_MEMORY_USAGE = 384 * 1024 * 1024;
 
+interface HTMLIFrameElementExtended extends HTMLIFrameElement {
+  allow: string;
+}
+
 export class Frame {
-  iframe: HTMLIFrameElement;
+  iframe: HTMLIFrameElementExtended;
 
   lastPing = Date.now();
   playerReady = false;
   playerName = '';
 
   constructor(el: HTMLElement) {
-    this.iframe = this.createIFrame(el);
+    this.iframe = this.createIFrame(el) as HTMLIFrameElementExtended;
 
     this.iframe.addEventListener('load', () => {
       //
@@ -84,10 +88,13 @@ export class Frame {
   }
 
   private createIFrame(el: HTMLElement): HTMLIFrameElement {
-    const iframe = document.createElement('iframe');
+    const iframe = document.createElement(
+      'iframe',
+    ) as HTMLIFrameElementExtended;
     iframe.id = 'frame';
     iframe.width = '100%';
     iframe.height = '100%';
+    iframe.allow = 'geolocation';
     iframe.src = getConfig().playerUrl;
     el.appendChild(iframe);
 

@@ -9,7 +9,7 @@ interface PlayerInfo {
   channel: string;
 }
 
-const address = require('address');
+const address = require('macaddress');
 
 export const getDeviceId = async function() {
   const macAddress = await getMacAsync();
@@ -34,7 +34,7 @@ export const getConnectionStatus = async function(): Promise<boolean> {
 
 function getMacAsync(): Promise<string> {
   return new Promise((resolve, reject) => {
-    address.mac((err: Error, addr: string) => {
+    address.one((err: Error, addr: string) => {
       if (err) {
         logger.error('Get Mac errored', err);
         reject(err);
