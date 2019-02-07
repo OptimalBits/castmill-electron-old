@@ -9,6 +9,8 @@ const updatePollInterval = isDevelopment ?
   :
   1 * 60 * 60 * 1000; // 1 hour
 
+const initialCheckDelay = 10 * 1000;
+
 const getArch = (): string => {
   // Somewhat hacky fix for mismatch between process.arch and build arch
   switch (process.arch) {
@@ -43,8 +45,8 @@ export const autoUpdateWhenAvailable = () => {
 
   setInterval(check, updatePollInterval);
 
-  // initial check after 10 seconds
-  setTimeout(check, 10000);
+  // initial check
+  setTimeout(check, initialCheckDelay);
 
   updater.on('error', (err: Error) => {
     logger.warn('update failed', err);

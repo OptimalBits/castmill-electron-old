@@ -54,7 +54,7 @@ export const getPlayerInfo = async function(): Promise<PlayerInfo> {
 
   logger.debug('player info', playerInfo);
 
-  return Promise.resolve(playerInfo);
+  return playerInfo;
 };
 
 //
