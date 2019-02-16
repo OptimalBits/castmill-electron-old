@@ -7,6 +7,7 @@ const config: Config = {
   logUrl:  `http://${localIp}:8082/log`,
   connectionCheckUrl: `http://${localIp}:8082/log`,
   updateCheckUrl: `http://${localIp}:4455/updates.json`, //TODO
+  updateChannel: 'local',
 };
 
 export default config;

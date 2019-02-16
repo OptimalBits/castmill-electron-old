@@ -13,8 +13,16 @@ const configs: Record<string, Config> = {
 };
 
 export function getConfig(): Config {
-  const configId: string = process.env.VUE_APP_PLAYER_CONFIG;
-  const config = configs[configId];
+  const configId: string = process.env.VUE_APP_PLAYER_CONFIG || 'tpd';
+  const buildMode: string = process.env.VUE_APP_BUILD_MODE;
+
+  const config: Config = { // copy to prevent editing from "outside"
+    ...configs[configId]
+  };
+
+  config.updateChannel = buildMode
+    ? `${config.updateChannel}-${buildMode}`
+    : config.updateChannel;
 
   logger.debug('config:', configId, config);
 
